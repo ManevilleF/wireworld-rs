@@ -3,24 +3,34 @@ mod components;
 mod resources;
 mod systems;
 
+use crate::resources::SpawnSelection;
 use bevy::prelude::*;
 use bevy_life::WireWorld2dPlugin;
 
-const WIREWORD_TIME_STEP: f64 = 0.05;
+// TODO: allow env var
+const WIRE_WORLD_TIME_STEP: f64 = 0.05;
+
+#[derive(Debug, Copy, Clone)]
+pub enum AppState {
+    Pause,
+    Running,
+}
 
 fn main() {
     App::build()
         .add_plugins(DefaultPlugins)
-        .add_plugin(WireWorld2dPlugin::new(WIREWORD_TIME_STEP))
+        .add_plugin(WireWorld2dPlugin::new(WIRE_WORLD_TIME_STEP))
         .insert_resource(WindowDescriptor {
             title: "WireWorld".to_string(),
             width: 1000.,
             height: 1000.,
             ..Default::default()
         })
+        .insert_resource(SpawnSelection::Conductor)
         .add_startup_system(systems::setup::setup_camera.system())
         .add_startup_system(systems::setup::setup_map.system())
         .add_system(systems::input::handle_reset.system())
         .add_system(systems::input::handle_mouse_input.system())
+        .add_system(systems::power::handle_power_generation.system())
         .run();
 }

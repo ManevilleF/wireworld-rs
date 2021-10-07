@@ -436,8 +436,6 @@ dependencies = [
 [[package]]
 name = "bevy_life"
 version = "0.2.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7ec13fdc42e794c5f8fe6122a378527ef1ff5329bf383ce422a8c58967c890a1"
 dependencies = [
  "bevy",
  "lazy_static",

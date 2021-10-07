@@ -10,6 +10,7 @@ bevy = "0.5"
 
 [dependencies.bevy_life]
 version = "0.2"
+path = "../bevy_life"
 features = ["auto-coloring"]
 
 # Enable optimizations for dependencies (incl. Bevy), but not for our code:
