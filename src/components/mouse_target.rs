@@ -19,6 +19,10 @@ impl MouseTarget {
                 sprite: Sprite::new(Vec2::splat(CELL_SIZE - 1.)),
                 material: materials.selector_material.clone(),
                 transform: Self::transform_value(position),
+                visible: Visible {
+                    is_visible: true,
+                    is_transparent: true,
+                },
                 ..Default::default()
             },
             mouse_target: Self,
@@ -29,7 +33,7 @@ impl MouseTarget {
         Transform::from_xyz(
             position.x as f32 * CELL_SIZE,
             position.y as f32 * CELL_SIZE,
-            0.,
+            5.,
         )
     }
 }

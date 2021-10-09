@@ -3,6 +3,7 @@ use crate::components::MouseTarget;
 use crate::resources::{BoardMaterials, MapEntity, SpawnSelection};
 use crate::systems::setup::spawn_map;
 use crate::CELL_SIZE;
+use bevy::log;
 use bevy::prelude::*;
 use bevy_life::{CellMap, MooreCell2d};
 
@@ -52,9 +53,10 @@ pub fn handle_mouse_input(
                 if cell_map.get_cell(&position).is_some() {
                     return;
                 }
-                println!(
+                log::info!(
                     "Spawning new conductor at {:?} ({:?}) ",
-                    position, mouse_position
+                    position,
+                    mouse_position
                 );
                 commands.entity(map.0).with_children(|mut builder| {
                     let entity =
@@ -65,6 +67,7 @@ pub fn handle_mouse_input(
             InputMode::Deletion => {
                 for (entity, cell) in cell_query.iter() {
                     if cell.coords == position {
+                        log::info!("Deleting cell at {:?}", cell.coords);
                         cell_map.remove_cell(&cell.coords);
                         commands.entity(entity).despawn_recursive();
                         break;
@@ -85,7 +88,7 @@ pub fn handle_reset(
         commands.entity(map.0).despawn_recursive();
         commands.remove_resource::<MapEntity>();
         cell_map.clear();
-        println!("regenerating map");
+        log::info!("regenerating map");
         spawn_map(&mut commands);
     }
 }

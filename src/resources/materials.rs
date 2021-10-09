@@ -15,7 +15,7 @@ impl BoardMaterials {
             conductor_material: assets.add(Color::GOLD.into()),
             electron_head_material: assets.add(Color::CYAN.into()),
             electron_tail_material: assets.add(Color::WHITE.into()),
-            selector_material: assets.add(Color::GRAY.into()),
+            selector_material: assets.add(Color::rgba(1., 1., 1., 0.2).into()),
             generator_material: assets.add(Color::ORANGE_RED.into()),
         }
     }
