@@ -1,4 +1,5 @@
-use crate::resources::MapEntity;
+use crate::resources::{BoardMaterials, MapEntity};
+use crate::CELL_SIZE;
 use bevy::prelude::*;
 use bevy_life::{MooreCell2d, WireWorldCellState};
 
@@ -8,14 +9,13 @@ pub fn setup_camera(mut commands: Commands) {
 }
 
 pub fn setup_map(mut commands: Commands, mut assets: ResMut<Assets<ColorMaterial>>) {
+    commands.insert_resource(BoardMaterials::new(&mut assets));
     // map
-    spawn_map(&mut commands, &mut assets);
+    spawn_map(&mut commands);
 }
 
-pub fn spawn_map(commands: &mut Commands, assets: &mut Assets<ColorMaterial>) {
+pub fn spawn_map(commands: &mut Commands) {
     let map_size = 5;
-    let sprite_size = 20.;
-    let material = assets.add(Color::rgba(0., 0., 0., 0.).into());
 
     let entity = commands
         .spawn()
@@ -38,13 +38,12 @@ pub fn spawn_map(commands: &mut Commands, assets: &mut Assets<ColorMaterial>) {
                     };
                     builder
                         .spawn_bundle(SpriteBundle {
-                            sprite: Sprite::new(Vec2::splat(sprite_size - 1.)),
+                            sprite: Sprite::new(Vec2::splat(CELL_SIZE - 1.)),
                             transform: Transform::from_xyz(
-                                sprite_size * x as f32,
-                                sprite_size * y as f32,
+                                CELL_SIZE * x as f32,
+                                CELL_SIZE * y as f32,
                                 0.,
                             ),
-                            material: material.clone(),
                             ..Default::default()
                         })
                         .insert(MooreCell2d::new(IVec2::new(x, y)))

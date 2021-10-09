@@ -9,6 +9,7 @@ use bevy_life::WireWorld2dPlugin;
 
 // TODO: allow env var
 const WIRE_WORLD_TIME_STEP: f64 = 0.05;
+pub const CELL_SIZE: f32 = 20.;
 
 #[derive(Debug, Copy, Clone)]
 pub enum AppState {
@@ -32,5 +33,6 @@ fn main() {
         .add_system(systems::input::handle_reset.system())
         .add_system(systems::input::handle_mouse_input.system())
         .add_system(systems::power::handle_power_generation.system())
+        .add_system(systems::coloring::color_states.system())
         .run();
 }

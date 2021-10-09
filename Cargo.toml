@@ -8,10 +8,12 @@ edition = "2018"
 [dependencies]
 bevy = "0.5"
 
+# TODO: Use live version
 [dependencies.bevy_life]
 version = "0.2"
 path = "../bevy_life"
-features = ["auto-coloring"]
+default-features = false
+features = ["2D"]
 
 # Enable optimizations for dependencies (incl. Bevy), but not for our code:
 [profile.dev.package."*"]

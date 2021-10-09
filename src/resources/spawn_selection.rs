@@ -57,7 +57,7 @@ impl ConductorBundle {
                 ),
                 ..Default::default()
             },
-            cell: MooreCell2d::new(coordinates.clone()),
+            cell: MooreCell2d::new(coordinates),
             state: WireWorldCellState::Conductor,
         }
     }
