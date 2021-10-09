@@ -8,7 +8,6 @@ edition = "2018"
 [dependencies]
 bevy = "0.5"
 
-# TODO: Use live version
 [dependencies.bevy_life]
 version = "0.2"
 default-features = false

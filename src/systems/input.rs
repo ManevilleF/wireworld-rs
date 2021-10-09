@@ -1,16 +1,30 @@
 use crate::common::*;
 use crate::components::MouseTarget;
-use crate::resources::{BoardMaterials, MapEntity, SpawnSelection};
-use crate::systems::setup::spawn_map;
+use crate::resources::{BoardMaterials, CameraTranslation, MapEntity, SpawnSelection};
 use crate::CELL_SIZE;
+use bevy::input::mouse::MouseWheel;
 use bevy::log;
 use bevy::prelude::*;
+use bevy::render::camera::Camera;
 use bevy_life::{CellMap, MooreCell2d};
 
 #[derive(Debug, Copy, Clone)]
 enum InputMode {
     Creation,
     Deletion,
+}
+
+pub fn handle_zoom(
+    mut camera_translation: ResMut<CameraTranslation>,
+    mut camera_query: Query<&mut Transform, With<Camera>>,
+    mut input_evr: EventReader<MouseWheel>,
+) {
+    for input in input_evr.iter() {
+        let mut transform = camera_query.single_mut().unwrap();
+        transform.translation.x += input.x;
+        transform.translation.y += input.y;
+        camera_translation.0 = Vec2::new(transform.translation.x, transform.translation.y);
+    }
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -24,6 +38,7 @@ pub fn handle_mouse_input(
     spawn_selection: Res<SpawnSelection>,
     mut cell_map: ResMut<CellMap<MooreCell2d>>,
     materials: Res<BoardMaterials>,
+    camera_translation: Res<CameraTranslation>,
 ) {
     let input_mode = if mouse_input.pressed(MouseButton::Left) {
         Some(InputMode::Creation)
@@ -35,7 +50,7 @@ pub fn handle_mouse_input(
     let window = windows.get_primary().unwrap();
     let mouse_position = match window.cursor_position() {
         None => return,
-        Some(p) => mouse_coords(window, p),
+        Some(p) => mouse_coords(window, p) + camera_translation.0,
     };
     let position = mouse_coords_to_cell(mouse_position, CELL_SIZE as i32);
 
@@ -78,17 +93,15 @@ pub fn handle_mouse_input(
     }
 }
 
-pub fn handle_reset(
-    mut commands: Commands,
+pub fn handle_keyboard_input(
     keys: Res<Input<KeyCode>>,
-    map: Res<MapEntity>,
-    mut cell_map: ResMut<CellMap<MooreCell2d>>,
+    mut camera_translation: ResMut<CameraTranslation>,
+    mut camera_query: Query<&mut Transform, With<Camera>>,
 ) {
     if keys.just_released(KeyCode::Space) {
-        commands.entity(map.0).despawn_recursive();
-        commands.remove_resource::<MapEntity>();
-        cell_map.clear();
-        log::info!("regenerating map");
-        spawn_map(&mut commands);
+        let mut transform = camera_query.single_mut().unwrap();
+        transform.translation.x = 0.;
+        transform.translation.y = 0.;
+        camera_translation.0 = Vec2::ZERO;
     }
 }

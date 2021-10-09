@@ -28,6 +28,10 @@ impl SpawnSelection {
                 .id(),
         }
     }
+
+    pub fn default_generator() -> Self {
+        Self::Generator { frequency: 2. }
+    }
 }
 
 #[derive(Bundle)]

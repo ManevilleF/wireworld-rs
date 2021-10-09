@@ -1,4 +1,4 @@
-use crate::resources::{BoardMaterials, MapEntity};
+use crate::resources::{BoardMaterials, CameraTranslation, MapEntity};
 use crate::CELL_SIZE;
 use bevy::prelude::*;
 use bevy_life::{MooreCell2d, WireWorldCellState};
@@ -6,6 +6,7 @@ use bevy_life::{MooreCell2d, WireWorldCellState};
 pub fn setup_camera(mut commands: Commands) {
     // Camera
     commands.spawn_bundle(OrthographicCameraBundle::new_2d());
+    commands.insert_resource(CameraTranslation(Vec2::ZERO))
 }
 
 pub fn setup_map(mut commands: Commands, mut assets: ResMut<Assets<ColorMaterial>>) {
