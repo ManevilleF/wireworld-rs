@@ -31,7 +31,7 @@ pub fn handle_zoom(
 pub fn handle_mouse_input(
     mut commands: Commands,
     mouse_input: Res<Input<MouseButton>>,
-    cell_query: Query<(Entity, &MooreCell2d)>,
+    cell_query: Query<&MooreCell2d>,
     mut selector_query: Query<&mut Transform, With<MouseTarget>>,
     windows: Res<Windows>,
     map: Res<MapEntity>,
@@ -80,11 +80,14 @@ pub fn handle_mouse_input(
                 });
             }
             InputMode::Deletion => {
-                for (entity, cell) in cell_query.iter() {
+                for cell in cell_query.iter() {
                     if cell.coords == position {
                         log::info!("Deleting cell at {:?}", cell.coords);
-                        cell_map.remove_cell(&cell.coords);
-                        commands.entity(entity).despawn_recursive();
+                        if let Some(entity) = cell_map.remove_cell(&cell.coords) {
+                            commands.entity(entity).despawn_recursive();
+                        } else {
+                            log::warn!("Tried to remove non existent cell at {:?}", cell.coords)
+                        }
                         break;
                     }
                 }
