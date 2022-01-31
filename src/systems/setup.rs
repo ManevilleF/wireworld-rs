@@ -9,8 +9,8 @@ pub fn setup_camera(mut commands: Commands) {
     commands.insert_resource(CameraTranslation(Vec2::ZERO))
 }
 
-pub fn setup_map(mut commands: Commands, mut assets: ResMut<Assets<ColorMaterial>>) {
-    commands.insert_resource(BoardMaterials::new(&mut assets));
+pub fn setup_map(mut commands: Commands) {
+    commands.insert_resource(BoardMaterials::new());
     // map
     spawn_map(&mut commands);
 }
@@ -39,7 +39,10 @@ pub fn spawn_map(commands: &mut Commands) {
                     };
                     builder
                         .spawn_bundle(SpriteBundle {
-                            sprite: Sprite::new(Vec2::splat(CELL_SIZE - 1.)),
+                            sprite: Sprite {
+                                custom_size: Some(Vec2::splat(CELL_SIZE - 1.)),
+                                ..Default::default()
+                            },
                             transform: Transform::from_xyz(
                                 CELL_SIZE * x as f32,
                                 CELL_SIZE * y as f32,

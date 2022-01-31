@@ -1,15 +1,23 @@
 [package]
 name = "wireworld-rs"
 version = "0.1.0"
-edition = "2018"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+edition = "2021"
+authors = ["Felix de Maneville <felix.maneville@gmail.com>"]
+description = "Wireworld example"
+license = "Apache License 2.0"
+keywords = ["cellular", "automaton", "life", "conway"]
+categories = ["game-development", "mathematics"]
+repository = "https://github.com/ManevilleF/wireworld-rs"
 
 [dependencies]
-bevy = "0.5"
+
+[dependencies.bevy]
+version = "0.6"
+default-features = false
+features = ["render", "x11"]
 
 [dependencies.bevy_life]
-version = "0.2"
+version = "0.3"
 default-features = false
 features = ["2D"]
 

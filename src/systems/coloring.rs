@@ -3,18 +3,15 @@ use bevy::prelude::*;
 use bevy_life::WireWorldCellState;
 
 pub fn color_states(
-    mut query: Query<
-        (&mut Handle<ColorMaterial>, &WireWorldCellState),
-        Changed<WireWorldCellState>,
-    >,
+    mut query: Query<(&mut Sprite, &WireWorldCellState), Changed<WireWorldCellState>>,
     materials: Res<BoardMaterials>,
 ) {
-    for (mut material, state) in query.iter_mut() {
-        let new_handle = match state {
-            WireWorldCellState::Conductor => materials.conductor_material.clone(),
-            WireWorldCellState::ElectronHead => materials.electron_head_material.clone(),
-            WireWorldCellState::ElectronTail => materials.electron_tail_material.clone(),
+    for (mut sprite, state) in query.iter_mut() {
+        let new_color = match state {
+            WireWorldCellState::Conductor => materials.conductor_material,
+            WireWorldCellState::ElectronHead => materials.electron_head_material,
+            WireWorldCellState::ElectronTail => materials.electron_tail_material,
         };
-        *material = new_handle;
+        sprite.color = new_color;
     }
 }

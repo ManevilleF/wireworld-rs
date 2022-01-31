@@ -20,7 +20,7 @@ pub fn handle_zoom(
     mut input_evr: EventReader<MouseWheel>,
 ) {
     for input in input_evr.iter() {
-        let mut transform = camera_query.single_mut().unwrap();
+        let mut transform = camera_query.single_mut();
         transform.translation.x += input.x;
         transform.translation.y += input.y;
         camera_translation.0 = Vec2::new(transform.translation.x, transform.translation.y);
@@ -54,7 +54,7 @@ pub fn handle_mouse_input(
     };
     let position = mouse_coords_to_cell(mouse_position, CELL_SIZE as i32);
 
-    match selector_query.single_mut().ok() {
+    match selector_query.get_single_mut().ok() {
         Some(mut t) => *t = MouseTarget::transform_value(position),
         None => {
             commands.spawn_bundle(MouseTarget::bundle(&materials, position));
@@ -73,9 +73,8 @@ pub fn handle_mouse_input(
                     position,
                     mouse_position
                 );
-                commands.entity(map.0).with_children(|mut builder| {
-                    let entity =
-                        spawn_selection.spawn_bundle(&mut builder, position, CELL_SIZE as f32);
+                commands.entity(map.0).with_children(|builder| {
+                    let entity = spawn_selection.spawn_bundle(builder, position, CELL_SIZE as f32);
                     cell_map.insert_cell(position, entity);
                 });
             }
@@ -102,7 +101,7 @@ pub fn handle_keyboard_input(
     mut camera_query: Query<&mut Transform, With<Camera>>,
 ) {
     if keys.just_released(KeyCode::Space) {
-        let mut transform = camera_query.single_mut().unwrap();
+        let mut transform = camera_query.single_mut();
         transform.translation.x = 0.;
         transform.translation.y = 0.;
         camera_translation.0 = Vec2::ZERO;

@@ -1,4 +1,6 @@
-#[derive(Debug, Clone)]
+use bevy::prelude::Component;
+
+#[derive(Debug, Clone, Component)]
 pub struct PowerGenerator {
     pub delta_time: f64,
     iteration_count: usize,

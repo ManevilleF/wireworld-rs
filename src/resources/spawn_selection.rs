@@ -53,7 +53,10 @@ impl ConductorBundle {
     pub fn new(coordinates: IVec2, sprite_size: f32) -> Self {
         Self {
             sprite_bundle: SpriteBundle {
-                sprite: Sprite::new(Vec2::splat(sprite_size - 1.)),
+                sprite: Sprite {
+                    custom_size: Some(Vec2::splat(sprite_size - 1.)),
+                    ..Default::default()
+                },
                 transform: Transform::from_xyz(
                     coordinates.x as f32 * sprite_size,
                     coordinates.y as f32 * sprite_size,

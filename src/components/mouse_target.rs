@@ -2,7 +2,7 @@ use crate::resources::BoardMaterials;
 use crate::CELL_SIZE;
 use bevy::prelude::*;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Component)]
 pub struct MouseTarget;
 
 #[derive(Bundle)]
@@ -16,13 +16,13 @@ impl MouseTarget {
     pub fn bundle(materials: &BoardMaterials, position: IVec2) -> MouseTargetBundle {
         MouseTargetBundle {
             sprite_bundle: SpriteBundle {
-                sprite: Sprite::new(Vec2::splat(CELL_SIZE - 1.)),
-                material: materials.selector_material.clone(),
-                transform: Self::transform_value(position),
-                visible: Visible {
-                    is_visible: true,
-                    is_transparent: true,
+                sprite: Sprite {
+                    color: materials.selector_material,
+                    custom_size: Some(Vec2::splat(CELL_SIZE - 1.)),
+                    ..Default::default()
                 },
+                transform: Self::transform_value(position),
+                visibility: Visibility { is_visible: true },
                 ..Default::default()
             },
             mouse_target: Self,
