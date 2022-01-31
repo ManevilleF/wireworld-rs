@@ -14,7 +14,7 @@ repository = "https://github.com/ManevilleF/wireworld-rs"
 [dependencies.bevy]
 version = "0.6"
 default-features = false
-features = ["render", "x11"]
+features = ["render", "bevy_winit"]
 
 [dependencies.bevy_life]
 version = "0.3"
