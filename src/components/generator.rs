@@ -17,16 +17,12 @@ impl PowerGenerator {
 
     pub fn try_to_iterate(&mut self, time: f64) -> bool {
         if time - self.last_generation_time >= self.delta_time {
-            self.new_iteration(time);
+            self.iteration_count += 1;
+            self.last_generation_time = time;
             true
         } else {
             false
         }
-    }
-
-    pub fn new_iteration(&mut self, time: f64) {
-        self.iteration_count += 1;
-        self.last_generation_time = time;
     }
 }
 

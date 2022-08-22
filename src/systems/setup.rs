@@ -1,11 +1,11 @@
-use crate::resources::{BoardMaterials, CameraTranslation, MapEntity};
+use crate::resources::{BoardMaterials, CameraTranslation, ConductorBundle, MapEntity};
 use crate::CELL_SIZE;
 use bevy::prelude::*;
 use bevy_life::{MooreCell2d, WireWorldCellState};
 
 pub fn setup_camera(mut commands: Commands) {
     // Camera
-    commands.spawn_bundle(OrthographicCameraBundle::new_2d());
+    commands.spawn_bundle(Camera2dBundle::default());
     commands.insert_resource(CameraTranslation(Vec2::ZERO))
 }
 
@@ -20,8 +20,7 @@ pub fn spawn_map(commands: &mut Commands) {
 
     let entity = commands
         .spawn()
-        .insert(Transform::default())
-        .insert(GlobalTransform::default())
+        .insert_bundle(SpatialBundle::default())
         .with_children(|builder| {
             for y in -map_size..=map_size {
                 for x in -map_size..=map_size {
@@ -37,8 +36,8 @@ pub fn spawn_map(commands: &mut Commands) {
                     } else {
                         WireWorldCellState::Conductor
                     };
-                    builder
-                        .spawn_bundle(SpriteBundle {
+                    builder.spawn_bundle(ConductorBundle {
+                        sprite_bundle: SpriteBundle {
                             sprite: Sprite {
                                 custom_size: Some(Vec2::splat(CELL_SIZE - 1.)),
                                 ..Default::default()
@@ -49,9 +48,10 @@ pub fn spawn_map(commands: &mut Commands) {
                                 0.,
                             ),
                             ..Default::default()
-                        })
-                        .insert(MooreCell2d::new(IVec2::new(x, y)))
-                        .insert(state);
+                        },
+                        cell: MooreCell2d::new(IVec2::new(x, y)),
+                        state,
+                    });
                 }
             }
         })
