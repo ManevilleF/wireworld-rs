@@ -57,7 +57,7 @@ pub fn handle_mouse_input(
     match selector_query.get_single_mut().ok() {
         Some(mut t) => *t = MouseTarget::transform_value(position),
         None => {
-            commands.spawn_bundle(MouseTarget::bundle(&materials, position));
+            commands.spawn(MouseTarget::bundle(&materials, position));
         }
     };
 

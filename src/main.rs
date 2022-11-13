@@ -20,13 +20,15 @@ pub enum AppState {
 
 fn main() {
     App::new()
-        .insert_resource(WindowDescriptor {
-            title: "WireWorld".to_string(),
-            width: 1000.,
-            height: 1000.,
-            ..Default::default()
-        })
-        .add_plugins(DefaultPlugins)
+        .add_plugins(DefaultPlugins.set(WindowPlugin {
+            window: WindowDescriptor {
+                title: "WireWorld".to_string(),
+                width: 1000.,
+                height: 1000.,
+                ..Default::default()
+            },
+            ..default()
+        }))
         .add_plugin(WireWorld2dPlugin::new(WIRE_WORLD_TIME_STEP))
         .insert_resource(SpawnSelection::Conductor)
         .add_startup_system(systems::setup::setup_camera)

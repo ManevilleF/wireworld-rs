@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-#[derive(Debug)]
+#[derive(Debug, Resource)]
 pub struct BoardMaterials {
     pub conductor_material: Color,
     pub electron_head_material: Color,

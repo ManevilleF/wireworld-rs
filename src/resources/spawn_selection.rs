@@ -4,6 +4,7 @@ use bevy::math::IVec2;
 use bevy::prelude::*;
 use bevy_life::{MooreCell2d, WireWorldCellState};
 
+#[derive(Debug, Clone, Resource)]
 pub enum SpawnSelection {
     Conductor,
     Generator { frequency: f64 },
@@ -18,10 +19,10 @@ impl SpawnSelection {
     ) -> Entity {
         match self {
             SpawnSelection::Conductor => commands
-                .spawn_bundle(ConductorBundle::new(coordinates, sprite_size))
+                .spawn(ConductorBundle::new(coordinates, sprite_size))
                 .id(),
             SpawnSelection::Generator { frequency } => commands
-                .spawn_bundle(GeneratorBundle {
+                .spawn(GeneratorBundle {
                     conductor_bundle: ConductorBundle::new(coordinates, sprite_size),
                     generator: PowerGenerator::new(*frequency),
                 })
