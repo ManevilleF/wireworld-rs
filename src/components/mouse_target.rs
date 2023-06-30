@@ -22,7 +22,7 @@ impl MouseTarget {
                     ..Default::default()
                 },
                 transform: Self::transform_value(position),
-                visibility: Visibility { is_visible: true },
+                visibility: Visibility::Inherited,
                 ..Default::default()
             },
             mouse_target: Self,

@@ -33,7 +33,7 @@ pub fn handle_mouse_input(
     mouse_input: Res<Input<MouseButton>>,
     cell_query: Query<&MooreCell2d>,
     mut selector_query: Query<&mut Transform, With<MouseTarget>>,
-    windows: Res<Windows>,
+    windows: Query<&Window>,
     map: Res<MapEntity>,
     spawn_selection: Res<SpawnSelection>,
     mut cell_map: ResMut<CellMap<MooreCell2d>>,
@@ -47,7 +47,7 @@ pub fn handle_mouse_input(
     } else {
         None
     };
-    let window = windows.get_primary().unwrap();
+    let window = windows.single();
     let mouse_position = match window.cursor_position() {
         None => return,
         Some(p) => mouse_coords(window, p) + camera_translation.0,

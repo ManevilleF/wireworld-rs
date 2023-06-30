@@ -21,24 +21,23 @@ pub enum AppState {
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins.set(WindowPlugin {
-            window: WindowDescriptor {
+            primary_window: Some(Window {
                 title: "WireWorld".to_string(),
-                width: 1000.,
-                height: 1000.,
-                ..Default::default()
-            },
+                resolution: (1000., 1000.).into(),
+                ..default()
+            }),
             ..default()
         }))
-        .add_plugin(WireWorld2dPlugin::new(WIRE_WORLD_TIME_STEP))
+        .add_plugin(WireWorld2dPlugin::with_time_step(WIRE_WORLD_TIME_STEP))
         .insert_resource(SpawnSelection::Conductor)
         .add_startup_system(systems::setup::setup_camera)
         .add_startup_system(systems::setup::setup_map)
-        .add_system(systems::input::handle_keyboard_input)
-        .add_system(systems::input::handle_mouse_input)
-        .add_system(systems::input::handle_zoom)
-        .add_system(systems::power::handle_power_generation)
-        .add_system(systems::coloring::color_states)
-        .add_system(systems::ui::handle_buttons)
+        .add_systems((systems::input::handle_keyboard_input,
+        systems::input::handle_mouse_input,
+        systems::input::handle_zoom,
+        systems::power::handle_power_generation,
+        systems::coloring::color_states,
+        systems::ui::handle_buttons))
         .add_event::<ButtonAction>()
         .run();
 }
