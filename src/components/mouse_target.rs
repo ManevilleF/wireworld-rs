@@ -7,7 +7,6 @@ pub struct MouseTarget;
 
 #[derive(Bundle)]
 pub struct MouseTargetBundle {
-    #[bundle]
     sprite_bundle: SpriteBundle,
     mouse_target: MouseTarget,
 }

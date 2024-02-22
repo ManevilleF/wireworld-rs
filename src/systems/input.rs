@@ -1,58 +1,46 @@
 use crate::common::*;
-use crate::components::MouseTarget;
-use crate::resources::{BoardMaterials, CameraTranslation, MapEntity, SpawnSelection};
+use crate::components::{MouseTarget, PowerGenerator};
+use crate::events::{ClearWorld, RemoveCell, ResetCamera, SpawnCell};
+use crate::resources::BoardMaterials;
 use crate::CELL_SIZE;
-use bevy::input::mouse::MouseWheel;
-use bevy::log;
 use bevy::prelude::*;
-use bevy::render::camera::Camera;
-use bevy_life::{CellMap, MooreCell2d};
 
 #[derive(Debug, Copy, Clone)]
-enum InputMode {
-    Creation,
-    Deletion,
-}
-
-pub fn handle_zoom(
-    mut camera_translation: ResMut<CameraTranslation>,
-    mut camera_query: Query<&mut Transform, With<Camera>>,
-    mut input_evr: EventReader<MouseWheel>,
-) {
-    for input in input_evr.iter() {
-        let mut transform = camera_query.single_mut();
-        transform.translation.x += input.x;
-        transform.translation.y += input.y;
-        camera_translation.0 = Vec2::new(transform.translation.x, transform.translation.y);
-    }
+enum CellAction {
+    SpawnConductor,
+    SpawnGenerator,
+    Remove,
 }
 
 #[allow(clippy::too_many_arguments)]
 pub fn handle_mouse_input(
     mut commands: Commands,
-    mouse_input: Res<Input<MouseButton>>,
-    cell_query: Query<&MooreCell2d>,
+    mouse_input: Res<ButtonInput<MouseButton>>,
     mut selector_query: Query<&mut Transform, With<MouseTarget>>,
     windows: Query<&Window>,
-    map: Res<MapEntity>,
-    spawn_selection: Res<SpawnSelection>,
-    mut cell_map: ResMut<CellMap<MooreCell2d>>,
     materials: Res<BoardMaterials>,
-    camera_translation: Res<CameraTranslation>,
+    camera: Query<(&Camera, &GlobalTransform)>,
+    mut spawn_cell_evw: EventWriter<SpawnCell>,
+    mut remove_cell_evw: EventWriter<RemoveCell>,
 ) {
     let input_mode = if mouse_input.pressed(MouseButton::Left) {
-        Some(InputMode::Creation)
+        Some(CellAction::SpawnConductor)
+    } else if mouse_input.pressed(MouseButton::Middle) {
+        Some(CellAction::SpawnGenerator)
     } else if mouse_input.pressed(MouseButton::Right) {
-        Some(InputMode::Deletion)
+        Some(CellAction::Remove)
     } else {
         None
     };
     let window = windows.single();
-    let mouse_position = match window.cursor_position() {
-        None => return,
-        Some(p) => mouse_coords(window, p) + camera_translation.0,
+    let (camera, cam_transform) = camera.single();
+    let Some(pos) = window
+        .cursor_position()
+        .and_then(|p| camera.viewport_to_world_2d(cam_transform, p))
+    else {
+        return;
     };
-    let position = mouse_coords_to_cell(mouse_position, CELL_SIZE as i32);
+    let position = mouse_coords_to_cell(pos, CELL_SIZE as i32);
 
     match selector_query.get_single_mut().ok() {
         Some(mut t) => *t = MouseTarget::transform_value(position),
@@ -64,46 +52,34 @@ pub fn handle_mouse_input(
     // Apply creation and deletion
     if let Some(mode) = input_mode {
         match mode {
-            InputMode::Creation => {
-                if cell_map.get_cell(&position).is_some() {
-                    return;
-                }
-                log::info!(
-                    "Spawning new conductor at {:?} ({:?}) ",
-                    position,
-                    mouse_position
-                );
-                commands.entity(map.0).with_children(|builder| {
-                    let entity = spawn_selection.spawn_bundle(builder, position, CELL_SIZE as f32);
-                    cell_map.insert_cell(position, entity);
+            CellAction::SpawnGenerator => {
+                spawn_cell_evw.send(SpawnCell {
+                    pos: position,
+                    generator: Some(PowerGenerator::default()),
                 });
             }
-            InputMode::Deletion => {
-                for cell in cell_query.iter() {
-                    if cell.coords == position {
-                        log::info!("Deleting cell at {:?}", cell.coords);
-                        if let Some(entity) = cell_map.remove_cell(&cell.coords) {
-                            commands.entity(entity).despawn_recursive();
-                        } else {
-                            log::warn!("Tried to remove non existent cell at {:?}", cell.coords)
-                        }
-                        break;
-                    }
-                }
+            CellAction::SpawnConductor => {
+                spawn_cell_evw.send(SpawnCell {
+                    pos: position,
+                    generator: None,
+                });
+            }
+            CellAction::Remove => {
+                remove_cell_evw.send(RemoveCell { pos: position });
             }
         }
     }
 }
 
 pub fn handle_keyboard_input(
-    keys: Res<Input<KeyCode>>,
-    mut camera_translation: ResMut<CameraTranslation>,
-    mut camera_query: Query<&mut Transform, With<Camera>>,
+    keys: Res<ButtonInput<KeyCode>>,
+    mut reset_cam_evw: EventWriter<ResetCamera>,
+    mut clear_map_evw: EventWriter<ClearWorld>,
 ) {
-    if keys.just_released(KeyCode::Space) {
-        let mut transform = camera_query.single_mut();
-        transform.translation.x = 0.;
-        transform.translation.y = 0.;
-        camera_translation.0 = Vec2::ZERO;
+    if keys.just_pressed(KeyCode::Space) {
+        reset_cam_evw.send(ResetCamera);
+    }
+    if keys.just_pressed(KeyCode::Backspace) {
+        clear_map_evw.send(ClearWorld);
     }
 }

@@ -1,11 +1,14 @@
 pub mod common;
 mod components;
+mod events;
 mod resources;
 mod systems;
 
-use crate::components::ButtonAction;
-use crate::resources::SpawnSelection;
+use std::time::Duration;
+
+use crate::events::*;
 use bevy::prelude::*;
+use bevy::time::common_conditions::on_timer;
 use bevy_life::WireWorld2dPlugin;
 
 // TODO: allow env var
@@ -28,16 +31,34 @@ fn main() {
             }),
             ..default()
         }))
-        .add_plugin(WireWorld2dPlugin::with_time_step(WIRE_WORLD_TIME_STEP))
-        .insert_resource(SpawnSelection::Conductor)
-        .add_startup_system(systems::setup::setup_camera)
-        .add_startup_system(systems::setup::setup_map)
-        .add_systems((systems::input::handle_keyboard_input,
-        systems::input::handle_mouse_input,
-        systems::input::handle_zoom,
-        systems::power::handle_power_generation,
-        systems::coloring::color_states,
-        systems::ui::handle_buttons))
-        .add_event::<ButtonAction>()
+        .add_plugins(
+            WireWorld2dPlugin::new()
+                .with_time_step(WIRE_WORLD_TIME_STEP)
+                .with_cell_map(),
+        )
+        .add_systems(Startup, (systems::camera::setup, systems::cells::setup))
+        .add_systems(
+            Update,
+            (
+                systems::camera::reset,
+                systems::camera::zoom,
+                systems::camera::movement,
+                systems::input::handle_mouse_input,
+                systems::input::handle_keyboard_input,
+                systems::coloring::color_states,
+                systems::cells::spawn_cells,
+                systems::cells::remove_cells,
+                systems::cells::clear_map,
+            ),
+        )
+        .add_systems(
+            FixedUpdate,
+            systems::power::handle_power_generation
+                .run_if(on_timer(Duration::from_secs_f64(WIRE_WORLD_TIME_STEP))),
+        )
+        .add_event::<ClearWorld>()
+        .add_event::<ResetCamera>()
+        .add_event::<SpawnCell>()
+        .add_event::<RemoveCell>()
         .run();
 }
