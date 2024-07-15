@@ -1,4 +1,7 @@
-use bevy::prelude::*;
+use bevy::{
+    color::palettes::css::{AQUA, GOLD, ORANGE_RED, WHITE},
+    prelude::*,
+};
 
 #[derive(Debug, Resource)]
 pub struct BoardMaterials {
@@ -13,11 +16,11 @@ impl BoardMaterials {
     #[inline]
     pub const fn new() -> Self {
         Self {
-            conductor_material: Color::GOLD,
-            electron_head_material: Color::CYAN,
-            electron_tail_material: Color::WHITE,
-            selector_material: Color::rgba(1., 1., 1., 0.2),
-            generator_material: Color::ORANGE_RED,
+            conductor_material: Color::Srgba(GOLD),
+            electron_head_material: Color::Srgba(AQUA),
+            electron_tail_material: Color::Srgba(WHITE),
+            selector_material: Color::srgba(1., 1., 1., 0.2),
+            generator_material: Color::Srgba(ORANGE_RED),
         }
     }
 }

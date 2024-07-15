@@ -1,5 +1,3 @@
-use std::ops::DerefMut;
-
 use bevy::{
     input::mouse::{MouseMotion, MouseWheel},
     prelude::*,

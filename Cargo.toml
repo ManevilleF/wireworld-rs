@@ -12,22 +12,22 @@ repository = "https://github.com/ManevilleF/wireworld-rs"
 [dependencies]
 
 [dependencies.bevy]
-version = "0.13"
+version = "0.14"
 default-features = false
 features = [
   "bevy_render",
+  "bevy_color",
   "bevy_winit",
   "bevy_asset",
   "bevy_core_pipeline",
   "bevy_sprite",
-  "multi-threaded",
+  "multi_threaded",
 ]
 
 [dependencies.bevy_life]
-version = "0.9"
+version = "0.10"
 default-features = false
 features = ["2D"]
-path = "../bevy_life"
 
 # Enable optimizations for dependencies (incl. Bevy), but not for our code:
 [profile.dev.package."*"]

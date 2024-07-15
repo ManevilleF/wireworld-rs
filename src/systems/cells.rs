@@ -41,7 +41,7 @@ pub fn spawn_map(commands: &mut Commands) {
         })
         .id();
     commands.insert_resource(MapEntity(entity));
-    println!("Map generated");
+    log::info!("Map generated");
 }
 
 pub fn spawn_cells(
@@ -52,13 +52,14 @@ pub fn spawn_cells(
 ) {
     for event in spawn_cells_evr.read() {
         if cell_map.get_cell(&event.pos).is_some() {
-            return;
+            continue;
         }
         log::info!("Spawning new cell at {:?}", event.pos,);
         let mut cmd = commands.spawn(CellBundle::new(event.pos, CELL_SIZE));
         if let Some(generator) = &event.generator {
             cmd.insert(generator.clone());
         }
+        cmd.set_parent(map.0);
     }
 }
 
@@ -83,6 +84,7 @@ pub fn clear_map(
     if clear_map_evr.is_empty() {
         return;
     }
+    log::info!("Clearing Map");
     clear_map_evr.clear();
     commands.entity(map.0).despawn_descendants();
 }

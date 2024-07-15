@@ -7,6 +7,7 @@ mod systems;
 use std::time::Duration;
 
 use crate::events::*;
+use bevy::input::InputSystem;
 use bevy::prelude::*;
 use bevy::time::common_conditions::on_timer;
 use bevy_life::WireWorld2dPlugin;
@@ -38,13 +39,19 @@ fn main() {
         )
         .add_systems(Startup, (systems::camera::setup, systems::cells::setup))
         .add_systems(
+            PreUpdate,
+            (
+                systems::input::handle_mouse_input,
+                systems::input::handle_keyboard_input,
+            )
+                .after(InputSystem),
+        )
+        .add_systems(
             Update,
             (
                 systems::camera::reset,
                 systems::camera::zoom,
                 systems::camera::movement,
-                systems::input::handle_mouse_input,
-                systems::input::handle_keyboard_input,
                 systems::coloring::color_states,
                 systems::cells::spawn_cells,
                 systems::cells::remove_cells,
