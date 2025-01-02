@@ -7,7 +7,7 @@ use crate::events::ResetCamera;
 
 pub fn setup(mut commands: Commands) {
     // Camera
-    commands.spawn(Camera2dBundle::default());
+    commands.spawn(Camera2d);
 }
 
 pub fn movement(

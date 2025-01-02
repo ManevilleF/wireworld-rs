@@ -16,7 +16,7 @@ pub fn spawn_map(commands: &mut Commands) {
     let map_size = 5;
 
     let entity = commands
-        .spawn(SpatialBundle::default())
+        .spawn((Transform::default(), Visibility::default()))
         .with_children(|builder| {
             for y in -map_size..=map_size {
                 for x in -map_size..=map_size {

@@ -36,7 +36,7 @@ pub fn handle_mouse_input(
     let (camera, cam_transform) = camera.single();
     let Some(pos) = window
         .cursor_position()
-        .and_then(|p| camera.viewport_to_world_2d(cam_transform, p))
+        .and_then(|p| camera.viewport_to_world_2d(cam_transform, p).ok())
     else {
         return;
     };

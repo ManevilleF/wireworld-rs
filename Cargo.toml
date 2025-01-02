@@ -12,20 +12,21 @@ repository = "https://github.com/ManevilleF/wireworld-rs"
 [dependencies]
 
 [dependencies.bevy]
-version = "0.14"
+version = "0.15"
 default-features = false
 features = [
-  "bevy_render",
-  "bevy_color",
-  "bevy_winit",
-  "bevy_asset",
-  "bevy_core_pipeline",
-  "bevy_sprite",
-  "multi_threaded",
+    "bevy_render",
+    "bevy_color",
+    "bevy_winit",
+    "bevy_window",
+    "bevy_asset",
+    "bevy_core_pipeline",
+    "bevy_sprite",
+    "multi_threaded",
 ]
 
 [dependencies.bevy_life]
-version = "0.10"
+version = "0.11"
 default-features = false
 features = ["2D"]
 

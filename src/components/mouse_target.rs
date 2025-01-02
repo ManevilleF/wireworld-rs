@@ -7,23 +7,20 @@ pub struct MouseTarget;
 
 #[derive(Bundle)]
 pub struct MouseTargetBundle {
-    sprite_bundle: SpriteBundle,
+    sprite: Sprite,
+    transform: Transform,
     mouse_target: MouseTarget,
 }
 
 impl MouseTarget {
     pub fn bundle(materials: &BoardMaterials, position: IVec2) -> MouseTargetBundle {
         MouseTargetBundle {
-            sprite_bundle: SpriteBundle {
-                sprite: Sprite {
-                    color: materials.selector_material,
-                    custom_size: Some(Vec2::splat(CELL_SIZE - 1.)),
-                    ..Default::default()
-                },
-                transform: Self::transform_value(position),
-                visibility: Visibility::Inherited,
+            sprite: Sprite {
+                color: materials.selector_material,
+                custom_size: Some(Vec2::splat(CELL_SIZE - 1.)),
                 ..Default::default()
             },
+            transform: Self::transform_value(position),
             mouse_target: Self,
         }
     }
